@@ -1,30 +1,32 @@
 //src/app/verifyemail/page.tsx
+
 "use client";
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { SparklesCore } from '@/components/ui/sparkles';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 import { GlareCard } from "@/components/ui/glare-card";
+import { FlipWords } from "@/components/ui/flip-words";
 
 export default function VerifyEmailPage() {
-  const [email, setEmail] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const words = ["DApp", "IIT-Bhilai", "Using LSAG", "Security"];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await fetch('/api/sendEmail', {
-        method: 'POST',
+      const response = await fetch("/api/sendEmail", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, type: 'verification' }),
+        body: JSON.stringify({ email, type: "verification" }),
       });
 
       const data = await response.json();
@@ -35,11 +37,11 @@ export default function VerifyEmailPage() {
       }
 
       setSuccess(data.success);
-      setError('');
+      setError("");
       setLoading(false);
     } catch (error) {
       console.error(error);
-      setError('Failed to send verification code');
+      setError("Failed to send verification code");
       setLoading(false);
     }
   };
@@ -49,12 +51,12 @@ export default function VerifyEmailPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/sendEmail', {
-        method: 'POST',
+      const response = await fetch("/api/sendEmail", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, type: 'verify', verificationCode }),
+        body: JSON.stringify({ email, type: "verify", verificationCode }),
       });
 
       const data = await response.json();
@@ -67,51 +69,57 @@ export default function VerifyEmailPage() {
       if (data.verified) {
         setSuccess(true);
         setLoading(false);
-        router.push('/dashboard');
+        router.push("/dashboard");
       } else {
         setError(data.message);
         setLoading(false);
       }
     } catch (error) {
       console.error(error);
-      setError('Failed to verify code');
+      setError("Failed to verify code");
       setLoading(false);
     }
   };
 
   return (
-    <div className="w-full h-full flex flex-col justify-center rounded-lg p-4 shadow-2xl">
-    <div className="flex justify-center">
-      <GlareCard className="flex flex-col items-center justify-center w-full max-w-md mt-4 mb-6 mr-8">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-yellow-500 text-transparent bg-clip-text mb-9">Verify your Email</h1>
-        <div> 
+    <div className="relative w-full h-full flex flex-col items-center justify-center p-4 sm:p-8">
+      <div className="absolute inset-0">
+        <GlareCard className="flex flex-col items-center justify-center w-full h-full max-w-md mt-4">
+          <div className="flex flex-col items-center justify-start space-y-6 mb-auto pt-10">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-yellow-500 text-transparent bg-clip-text">
+              EVoting : <FlipWords words={words} />
+            </h1>
+          </div>
+          <div className="flex flex-col items-center justify-end space-y-6 mt-auto pb-9 mb-5">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-yellow-500 text-transparent bg-clip-text">
+              Verify your Email
+            </h1>
+          </div>
+        </GlareCard>
+      </div>
+      <div className="relative z-10 w-full max-w-[320px] sm:max-w-[380px] bg-slate-950/50 p-4 rounded-lg">
         {!success ? (
-           <form onSubmit={handleSubmit} className="space-y-6  ">
-            <div className="space-y-6">
-              {/* <label htmlFor="email" className="block text-white">
-                Email
-              </label> */}
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+          <form onSubmit={handleSubmit} className="space-y-6 w-full">
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              required
+              className="w-full px-4 py-2 bg-gray-800/90 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:outline-none backdrop-blur-sm"
+            />
 
             <HoverBorderGradient
               containerClassName="w-full rounded-full"
               as="button"
-            
               className="w-full bg-black text-white py-2 flex items-center justify-center"
             >
-              <span>{loading ? 'Sending...' : 'Send Verification Code'}</span>
+              <span>{loading ? "Sending..." : "Send Verification Code"}</span>
             </HoverBorderGradient>
           </form>
         ) : (
-          <form onSubmit={handleVerify} className="mt-6 space-y-6  ">
+          <form onSubmit={handleVerify} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="verificationCode" className="block text-white">
                 Verification Code
@@ -122,29 +130,100 @@ export default function VerifyEmailPage() {
                 value={verificationCode}
                 onChange={(e) => setVerificationCode(e.target.value)}
                 required
-                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 bg-gray-800/90 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:outline-none backdrop-blur-sm"
               />
             </div>
 
             <HoverBorderGradient
               containerClassName="w-full rounded-full"
               as="button"
-            
               className="w-full bg-black text-white py-2 flex items-center justify-center"
             >
-              <span>{loading ? 'Verifying...' : 'Verify'}</span>
+              <span>{loading ? "Verifying..." : "Verify"}</span>
             </HoverBorderGradient>
           </form>
         )}
 
-{error && (
-            <div className="mt-4 p-4 bg-red-900/50 border border-red-700 rounded-lg text-red-200">
-              {error}
-            </div>
+        {error && (
+          <div className="mt-4 p-4 bg-red-900/50 border border-red-700 rounded-lg text-red-200">
+            {error}
+          </div>
         )}
-        </div>
-      </GlareCard>
-    </div>
+      </div>
     </div>
   );
 }
+
+
+
+
+
+
+ 
+
+  
+//     <div className="w-full h-full flex flex-col justify-center rounded-lg p-4 shadow-2xl">
+//     <div className="flex justify-center">
+//       <GlareCard className="flex flex-col items-center justify-center w-full max-w-md mt-4 mb-6 mr-8">
+//         <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-yellow-500 text-transparent bg-clip-text mb-9">Verify your Email</h1>
+//         <div> 
+//         {!success ? (
+//            <form onSubmit={handleSubmit} className="space-y-6  ">
+//             <div className="space-y-6">
+//               {/* <label htmlFor="email" className="block text-white">
+//                 Email
+//               </label> */}
+//               <input
+//                 type="email"
+//                 id="email"
+//                 value={email}
+//                 onChange={(e) => setEmail(e.target.value)}
+//                 required
+//                 className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500"
+//               />
+//             </div>
+
+//             <HoverBorderGradient
+//               containerClassName="w-full rounded-full"
+//               as="button"
+            
+//               className="w-full bg-black text-white py-2 flex items-center justify-center"
+//             >
+//               <span>{loading ? 'Sending...' : 'Send Verification Code'}</span>
+//             </HoverBorderGradient>
+//           </form>
+//         ) : (
+//           <form onSubmit={handleVerify} className="mt-6 space-y-6  ">
+//             <div className="space-y-2">
+//               <label htmlFor="verificationCode" className="block text-white">
+//                 Verification Code
+//               </label>
+//               <input
+//                 type="text"
+//                 id="verificationCode"
+//                 value={verificationCode}
+//                 onChange={(e) => setVerificationCode(e.target.value)}
+//                 required
+//                 className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500"
+//               />
+//             </div>
+
+//             <HoverBorderGradient
+//               containerClassName="w-full rounded-full"
+//               as="button"
+            
+//               className="w-full bg-black text-white py-2 flex items-center justify-center"
+//             >
+//               <span>{loading ? 'Verifying...' : 'Verify'}</span>
+//             </HoverBorderGradient>
+//           </form>
+//         )}
+
+// {error && (
+//             <div className="mt-4 p-4 bg-red-900/50 border border-red-700 rounded-lg text-red-200">
+//               {error}
+//             </div>
+//         )}
+//         </div>
+//       </GlareCard>
+    
