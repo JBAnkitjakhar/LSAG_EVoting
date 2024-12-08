@@ -25,13 +25,13 @@ export function AnimatedTestimonialsDemo() {
         designation: "Using Blockchain technology",
         src: "/blockchain.png",
       },
-    {
-      quote:
-        "This solution has significantly improved our team's productivity. The intuitive interface makes complex tasks simple.",
-      name: "Ankit Jakhar",
-      designation: "Project Assistant , IIT bhilai",
-      src: "/jb.png",
-    },
+    // {
+    //   quote:
+    //     "This solution has significantly improved our team's productivity. The intuitive interface makes complex tasks simple.",
+    //   name: "Ankit Jakhar",
+    //   designation: "Project Assistant , IIT bhilai",
+    //   src: "/jb.png",
+    // },
   ];
   return <AnimatedTestimonials testimonials={testimonials} autoplay={true}/>;
 }
